@@ -28,21 +28,19 @@ jobs:
         ref: opt_setup_ci
         repository: siliconflow/${{ secrets.ONEDIFF_ENTERPRISE }}
         token: ${{ secrets.WHEEL_TOKEN }}
-    - run: pwd && ls
 
     - name: Checkout onediff_release
       uses: actions/checkout@v2
       with:
-        ref: master
+        ref: setup_release_ci
         repository: siliconflow/onediff_releases
         path: onediff_releases
         token: ${{ secrets.WHEEL_TOKEN }}
-    - run: pwd && ls && false
 
     - name: Python wheels manylinux build
       uses: RalfG/python-wheels-manylinux-build@v0.7.1
       with:
-        python-versions: 'cp38-cp38 cp39-cp39 cp310-cp310 cp311-cp311'
+        python-versions: 'cp310-cp310 cp311-cp311'
         build-requirements: 'Cython==3.0.8 requests==2.31.0'
         pip-wheel-args: '-w ./wheels/${{ matrix.cuda-version }} --no-deps'
 
