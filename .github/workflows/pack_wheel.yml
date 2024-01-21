@@ -24,9 +24,8 @@ jobs:
     steps:
     # - name: Checkout repository
     #   uses: actions/checkout@v2
-    - name: Checkout private oneflow
+    - name: Checkout private onediff
       uses: actions/checkout@v2
-      if: ${{ inputs.is_priv }}
       with:
         ref: opt_setup_ci
         repository: siliconflow/${{ secrets.ONEDIFF_ENTERPRISE }}
