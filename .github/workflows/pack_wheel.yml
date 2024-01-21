@@ -22,26 +22,37 @@ jobs:
       CUDA_VERSION: ${{ matrix.cuda-version }}
 
     steps:
-    # - name: Checkout repository
-    #   uses: actions/checkout@v2
     - name: Checkout private onediff
       uses: actions/checkout@v2
       with:
         ref: opt_setup_ci
         repository: siliconflow/${{ secrets.ONEDIFF_ENTERPRISE }}
         token: ${{ secrets.WHEEL_TOKEN }}
+
+    - name: Checkout onediff_release
+      uses: actions/checkout@v2
+      with:
+        ref: master
+        repository: siliconflow/onediff_releases
+        path: onediff_releases
+        token: ${{ secrets.WHEEL_TOKEN }}
         
     - name: Python wheels manylinux build
       uses: RalfG/python-wheels-manylinux-build@v0.7.1
       with:
-        python-versions: 'cp310-cp310 cp311-cp311'
+        python-versions: 'cp38-cp38 cp39-cp39 cp310-cp310 cp311-cp311'
         build-requirements: 'Cython==3.0.8 requests==2.31.0'
         pip-wheel-args: '-w ./wheels/${{ matrix.cuda-version }} --no-deps'
 
     - name: create release with assests
       run: |
         sudo find ./wheels/${{ matrix.cuda-version }} -type f ! -name '*manylinux*' -exec rm {} +
+        python onediff_releases/generate_pypi_index.py ./wheels/${{ matrix.cuda-version }}
         find ./wheels -type f
+
+    - name: Publish to OSS
+      run: |
+        true
 
     - name: Set Date
       id: set_date
