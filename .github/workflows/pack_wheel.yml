@@ -40,7 +40,7 @@ jobs:
 
     - name: create release with assests
       run: |
-        find ./wheels/${{ matrix.cuda-version }} -type f ! -name '*manylinux*' -exec rm {} +
+        sudo find ./wheels/${{ matrix.cuda-version }} -type f ! -name '*manylinux*' -exec rm {} +
         find ./wheels -type f
 
     - name: Set Date
