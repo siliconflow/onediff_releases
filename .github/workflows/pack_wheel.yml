@@ -61,7 +61,7 @@ jobs:
 
     - name: Publish to OSS
       run: |
-        $HOME/ossutil64 cp --disable-ignore-error --update ./wheels/${{ matrix.cuda-version }}  ${{ secrets.ONEDIFF_OSS_URL }}/${{ matrix.cuda-version }}
+        $HOME/ossutil64 cp --disable-ignore-error --update --recursive ./wheels/${{ matrix.cuda-version }}  ${{ secrets.ONEDIFF_OSS_URL }}/${{ matrix.cuda-version }}
 
     - name: Set Date
       id: set_date
