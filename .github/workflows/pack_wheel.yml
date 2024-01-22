@@ -27,7 +27,7 @@ jobs:
     - name: Checkout private onediff
       uses: actions/checkout@v2
       with:
-        ref: opt_setup_ci
+        ref: opt_setup
         repository: siliconflow/${{ secrets.ONEDIFF_ENTERPRISE }}
         token: ${{ secrets.WHEEL_TOKEN }}
 
