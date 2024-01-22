@@ -54,7 +54,7 @@ jobs:
         find ./wheels -type f
 
     - name: Setup ossutil
-      if: github.repository == 'siliconflow/onediff_releases' && matrix.download_area == "CN"
+      if: github.repository == 'siliconflow/onediff_releases' && matrix.download_area == 'CN'
       run: |
         if [ ! -f "$HOME/ossutil64" ]; then
           curl http://gosspublic.alicdn.com/ossutil/1.7.15/ossutil64 -o $HOME/ossutil64
@@ -63,17 +63,17 @@ jobs:
         $HOME/ossutil64 config -e oss-cn-beijing.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}  -L EN -c $HOME/.ossutilconfig
 
     - name: Publish to OSS
-      if: matrix.download_area == "CN"
+      if: matrix.download_area == 'CN'
       run: |
         $HOME/ossutil64 cp --disable-ignore-error --update --recursive ./wheels/${{ matrix.cuda-version }}  ${{ secrets.ONEDIFF_OSS_URL }}/${{ matrix.cuda-version }}
 
     - name: Set Date
-      if: matrix.download_area == "EU"
+      if: matrix.download_area == 'EU'
       id: set_date
       run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
     - name: Publish archives
-      if: matrix.download_area == "EU"
+      if: matrix.download_area == 'EU'
       uses: ncipollo/release-action@v1.12.0
       with:
         artifacts: "./wheels/${{ matrix.cuda-version }}/*.whl"
