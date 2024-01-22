@@ -50,9 +50,18 @@ jobs:
         sudo python onediff_releases/generate_pypi_index.py ./wheels/${{ matrix.cuda-version }}
         find ./wheels -type f
 
+    - name: Setup ossutil
+      if: github.repository == 'siliconflow/onediff_releases'
+      run: |
+        if [ ! -f "$HOME/ossutil64" ]; then
+          curl http://gosspublic.alicdn.com/ossutil/1.7.15/ossutil64 -o $HOME/ossutil64
+          chmod +x $HOME/ossutil64
+        fi
+        $HOME/ossutil64 config -e oss-cn-beijing.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}  -L EN -c $HOME/.ossutilconfig
+
     - name: Publish to OSS
       run: |
-        true
+        $HOME/ossutil64 cp --disable-ignore-error --update ./wheels/${{ matrix.cuda-version }}  ${{ secrets.OSS_ACCESS_KEY_SECRET }}/${{ matrix.cuda-version }}
 
     - name: Set Date
       id: set_date
