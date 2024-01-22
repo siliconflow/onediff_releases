@@ -32,7 +32,7 @@ python3 -m pip install git+https://github.com/siliconflow/onediff.git@main#egg=o
 
 ```bash
 python3 -m pip install oneflow -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/main/cu118 && \
-python3 -m pip install onediff-quant -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/onediff-quant/cu118 && \
+python3 -m pip install onediff-quant -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/onediff-quant/cu118/ && \
 python3 -m pip install git+https://github.com/siliconflow/onediff.git@main#egg=onediff
 ```
 
@@ -40,7 +40,7 @@ python3 -m pip install git+https://github.com/siliconflow/onediff.git@main#egg=o
 
 ```bash
 python3 -m pip install oneflow -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/main/cu121 && \
-python3 -m pip install onediff-quant -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/onediff-quant/cu121 && \
+python3 -m pip install onediff-quant -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/onediff-quant/cu121/ && \
 python3 -m pip install git+https://github.com/siliconflow/onediff.git@main#egg=onediff
 ```
 
@@ -48,6 +48,6 @@ python3 -m pip install git+https://github.com/siliconflow/onediff.git@main#egg=o
 
 ```bash
 python3 -m pip install oneflow -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/main/cu122 && \
-python3 -m pip install onediff-quant -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/onediff-quant/cu122 && \
+python3 -m pip install onediff-quant -f https://oneflow-pro.oss-cn-beijing.aliyuncs.com/onediff-quant/cu122/ && \
 python3 -m pip install git+https://github.com/siliconflow/onediff.git@main#egg=onediff
 ```
