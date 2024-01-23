@@ -27,7 +27,7 @@ jobs:
       - name: Checkout onediff_release
         uses: actions/checkout@v2
         with:
-          ref: opt_release_ci
+          ref: setup_release_ci
           repository: siliconflow/onediff_releases
           path: onediff_releases
           token: ${{ secrets.WHEEL_TOKEN }}
