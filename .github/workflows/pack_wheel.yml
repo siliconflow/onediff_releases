@@ -3,8 +3,8 @@ name: Daily Build
 on:
   schedule:
     - cron: 0 10 * * *
-  pull_request:
-    branches: [master]
+  # pull_request:
+  #   branches: [master]
   push:
     branches: [master]
   workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
       - name: Checkout onediff_release
         uses: actions/checkout@v2
         with:
-          ref: setup_release_ci
+          ref: master
           repository: siliconflow/onediff_releases
           path: onediff_releases
           token: ${{ secrets.WHEEL_TOKEN }}
