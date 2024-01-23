@@ -1,0 +1,72 @@
+---
+name: Daily Build
+on:
+  schedule:
+    - cron: 0 10 * * *
+  # pull_request:
+  #   branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        download_area: [CN, EU]
+    steps:
+      - name: Checkout private onediff
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          repository: siliconflow/${{ secrets.ONEDIFF_ENTERPRISE }}
+          token: ${{ secrets.WHEEL_TOKEN }}
+      - name: Checkout onediff_release
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          repository: siliconflow/onediff_releases
+          path: onediff_releases
+          token: ${{ secrets.WHEEL_TOKEN }}
+      - name: Python wheels manylinux build
+        uses: RalfG/python-wheels-manylinux-build@v0.7.1
+        with:
+          python-versions: cp38-cp38 cp39-cp39 cp310-cp310 cp311-cp311
+          build-requirements: Cython==3.0.8
+          pip-wheel-args: -w ./wheels --no-deps
+        env:
+          DOWNLOAD_AREA: ${{ matrix.download_area }}
+      - name: Create release with assests
+        run: |
+          sudo find ./wheels -type f ! -name '*manylinux*' -exec rm {} +
+          sudo python onediff_releases/generate_pypi_index.py ./wheels
+          find ./wheels -type f
+      - name: Setup ossutil
+        if: github.repository == 'siliconflow/onediff_releases' && matrix.download_area
+          == 'CN'
+        run: |
+          if [ ! -f "$HOME/ossutil64" ]; then
+            curl http://gosspublic.alicdn.com/ossutil/1.7.15/ossutil64 -o $HOME/ossutil64
+            chmod +x $HOME/ossutil64
+          fi
+          $HOME/ossutil64 config -e oss-cn-beijing.aliyuncs.com -i ${{ secrets.OSS_ACCESS_KEY_ID }} -k ${{ secrets.OSS_ACCESS_KEY_SECRET }}  -L EN -c $HOME/.ossutilconfig
+      - name: Publish to OSS
+        if: matrix.download_area == 'CN'
+        run: |
+          $HOME/ossutil64 cp --disable-ignore-error --update --recursive ./wheels  ${{ secrets.ONEDIFF_OSS_URL }}
+      - name: Set Date
+        if: matrix.download_area == 'EU'
+        id: set_date
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      - name: Publish archives
+        if: matrix.download_area == 'EU'
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: ./wheels/*.whl
+          token: ${{ secrets.WHEEL_TOKEN }}
+          tag: enterprise
+          name: latest enterprise-${{ env.DATE }}
+          removeArtifacts: false
+          allowUpdates: true
+          replacesArtifacts: true
+          makeLatest: false
