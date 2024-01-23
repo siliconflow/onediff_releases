@@ -1,5 +1,7 @@
 ## Install OneDiff Enterprise
 
+[![Daily Build](https://github.com/siliconflow/onediff_releases/actions/workflows/pack_wheel.yml/badge.svg)](https://github.com/siliconflow/onediff_releases/actions/workflows/pack_wheel.yml)
+
 ### For NA/EU users
 
 **CUDA 11.8**
