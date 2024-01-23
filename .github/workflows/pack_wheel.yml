@@ -3,8 +3,8 @@ name: Daily Build
 on:
   schedule:
     - cron: 0 10 * * *
-  # pull_request:
-  #   branches: [master]
+  pull_request:
+    branches: [master]
   push:
     branches: [master]
   workflow_dispatch:
@@ -14,14 +14,11 @@ jobs:
     strategy:
       matrix:
         download_area: [CN, EU]
-        cuda-version: [cu118, cu121, cu122]
-    env:
-      CUDA_VERSION: ${{ matrix.cuda-version }}
     steps:
       - name: Checkout private onediff
         uses: actions/checkout@v2
         with:
-          ref: opt_setup
+          ref: master
           repository: siliconflow/${{ secrets.ONEDIFF_ENTERPRISE }}
           token: ${{ secrets.WHEEL_TOKEN }}
       - name: Checkout onediff_release
@@ -36,13 +33,13 @@ jobs:
         with:
           python-versions: cp38-cp38 cp39-cp39 cp310-cp310 cp311-cp311
           build-requirements: Cython==3.0.8 requests==2.31.0 beautifulsoup4==4.12.3
-          pip-wheel-args: -w ./wheels/${{ matrix.cuda-version }} --no-deps
+          pip-wheel-args: -w ./wheels --no-deps
         env:
           DOWNLOAD_AREA: ${{ matrix.download_area }}
       - name: Create release with assests
         run: |
-          sudo find ./wheels/${{ matrix.cuda-version }} -type f ! -name '*manylinux*' -exec rm {} +
-          sudo python onediff_releases/generate_pypi_index.py ./wheels/${{ matrix.cuda-version }}
+          sudo find ./wheels -type f ! -name '*manylinux*' -exec rm {} +
+          sudo python onediff_releases/generate_pypi_index.py ./wheels
           find ./wheels -type f
       - name: Setup ossutil
         if: github.repository == 'siliconflow/onediff_releases' && matrix.download_area
@@ -56,7 +53,7 @@ jobs:
       - name: Publish to OSS
         if: matrix.download_area == 'CN'
         run: |
-          $HOME/ossutil64 cp --disable-ignore-error --update --recursive ./wheels/${{ matrix.cuda-version }}  ${{ secrets.ONEDIFF_OSS_URL }}/${{ matrix.cuda-version }}
+          $HOME/ossutil64 cp --disable-ignore-error --update --recursive ./wheels  ${{ secrets.ONEDIFF_OSS_URL }}
       - name: Set Date
         if: matrix.download_area == 'EU'
         id: set_date
@@ -65,10 +62,10 @@ jobs:
         if: matrix.download_area == 'EU'
         uses: ncipollo/release-action@v1.12.0
         with:
-          artifacts: ./wheels/${{ matrix.cuda-version }}/*.whl
+          artifacts: ./wheels/*.whl
           token: ${{ secrets.WHEEL_TOKEN }}
-          tag: enterprise-${{ matrix.cuda-version }}
-          name: latest enterprise-${{ matrix.cuda-version }}-${{ env.DATE }}
+          tag: enterprise
+          name: latest enterprise-${{ env.DATE }}
           removeArtifacts: false
           allowUpdates: true
           replacesArtifacts: true
